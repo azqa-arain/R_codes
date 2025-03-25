@@ -1,0 +1,189 @@
+
+#*****************************************************************************
+#*MATERNAL WEIGHT Query 
+#*****************************************************************************
+
+# clear environment 
+rm(list = ls())
+
+# load packages 
+library(tidyverse)
+library(readxl)
+library(tibble)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(data.table)
+library(lubridate)
+library(openxlsx)
+library(anthro)
+library(writexl)
+
+mnh05<- read_csv("~/DESCRIPTIVE_PRISMA/data/21-02-25/data/mnh05.csv")
+output_path <- "~/DESCRIPTIVE_PRISMA/data/21-02-25/output/MAT_WEIGHT.csv"
+
+mnh11<- read_csv("~/DESCRIPTIVE_PRISMA/data/21-02-25/data/mnh11.csv")
+mnh13<- read_csv("~/DESCRIPTIVE_PRISMA/data/21-02-25/data/mnh13.csv")
+
+
+mnh05_filter <- mnh05 %>%
+  mutate(ANT_PEDAT = ymd(parse_date_time(ANT_PEDAT, order = c("%d/%m/%Y","%d-%m-%Y","%Y-%m-%d", "%d-%b-%y", "%d-%m-%y")))) %>% # Convert VISIT_OBSSTDAT to date format
+  filter(MAT_VISIT_MNH05 %in% c(1, 2) &
+           MAT_VITAL_MNH05 == 1 &
+           (TYPE_VISIT %in% c(1:12))&
+           WEIGHT_PEPERF == 1) %>%
+  select(MOMID, PREGID, TYPE_VISIT,ANT_PEDAT, WEIGHT_PERES, WEIGHT_PEPERF, FORMCOMPLID_MNH05)%>%
+  rename(VISIT_DATE=ANT_PEDAT,
+         TEAM=FORMCOMPLID_MNH05)
+
+# Replace -7 and -5 with NA
+mnh05_filter[mnh05_filter %in% c(-7, -5)] <- NA
+
+# Sort the dataframe by 'MOMID', 'PREGID', and 'TYPE_VISIT'
+mnh05_filter <- mnh05_filter %>%
+  arrange(MOMID, PREGID,VISIT_DATE,TYPE_VISIT,TEAM)
+
+# Pivot dataframe wider
+wide_df <- mnh05_filter %>%
+  pivot_wider(names_from = TYPE_VISIT, values_from = c(WEIGHT_PERES, VISIT_DATE,TEAM), id_cols = c(MOMID, PREGID))
+
+wide_df<-wide_df%>%select(MOMID,PREGID,VISIT_DATE_1,WEIGHT_PERES_1,TEAM_1,
+                          VISIT_DATE_2,WEIGHT_PERES_2,TEAM_2,
+                          VISIT_DATE_3,WEIGHT_PERES_3,TEAM_3,
+                          VISIT_DATE_4,WEIGHT_PERES_4,TEAM_4,
+                          VISIT_DATE_5,WEIGHT_PERES_5,TEAM_5,
+                          VISIT_DATE_6,WEIGHT_PERES_6,TEAM_6,
+                          VISIT_DATE_7,WEIGHT_PERES_7,TEAM_7,
+                          VISIT_DATE_8,WEIGHT_PERES_8,TEAM_8,
+                          VISIT_DATE_9,WEIGHT_PERES_9,TEAM_9,
+                          VISIT_DATE_10,WEIGHT_PERES_10,TEAM_10,
+                          VISIT_DATE_11,WEIGHT_PERES_11,TEAM_11,
+                          VISIT_DATE_12,WEIGHT_PERES_12,TEAM_12)%>%
+  
+           mutate( VISIT_1_VS_2=WEIGHT_PERES_1-WEIGHT_PERES_2,
+                   VISIT_2_VS_3=WEIGHT_PERES_2-WEIGHT_PERES_3,
+                   VISIT_3_VS_4=WEIGHT_PERES_3-WEIGHT_PERES_4,
+                   VISIT_4_VS_5=WEIGHT_PERES_4-WEIGHT_PERES_5,
+                   VISIT_5_VS_6=WEIGHT_PERES_5-WEIGHT_PERES_6,
+                   VISIT_6_VS_7=WEIGHT_PERES_6-WEIGHT_PERES_7,
+                   VISIT_7_VS_8=WEIGHT_PERES_7-WEIGHT_PERES_8,
+                   VISIT_8_VS_9=WEIGHT_PERES_9-WEIGHT_PERES_10,
+                   VISIT_10_VS_11=WEIGHT_PERES_10-WEIGHT_PERES_11,
+                   VISIT_11_VS_12=WEIGHT_PERES_11-WEIGHT_PERES_12)
+
+
+
+
+
+#*****************************************************************************
+#*Infant WEIGHT Query 
+#*****************************************************************************
+
+
+
+#Clean data to remove cases with Infant Death, Incomplete Visits and Unscheduled Visits
+mnh11_filter <- mnh11 %>% 
+  mutate(VISIT_OBSSTDAT = ymd(parse_date_time(VISIT_OBSSTDAT, order = c("%d/%m/%Y","%d-%m-%Y","%Y-%m-%d", "%d-%b-%y", "%d-%m-%y"))),
+         TYPE_VISIT = 6,
+         WEIGHT_PERES = BW_FAORRES) %>% 
+  filter(INF_VISIT_MNH11 %in% c(1, 2, 3) & # Filter rows where INF_VISIT_MNH13 is 1 or 2
+           INF_VITAL_MNH11 == 1) %>% # Filter rows where INF_VITAL_MNH13 is 1
+  arrange(MOMID, PREGID, INFANTID, TYPE_VISIT, VISIT_OBSSTDAT) %>% # Arrange rows by INFANTID, TYPE_VISIT, and VISIT_OBSSTDAT
+  distinct(MOMID, PREGID, INFANTID, TYPE_VISIT, .keep_all = TRUE) %>% # Keep distinct rows based on INFANTID and TYPE_VISIT while retaining all columns
+  select(MOMID, PREGID, INFANTID, TYPE_VISIT,VISIT_OBSSTDAT, WEIGHT_PERES,FORMCOMPLID_MNH11)  %>% # Select specified columns
+  filter(!(is.na(WEIGHT_PERES)))%>%
+  rename(VISIT_DATE=VISIT_OBSSTDAT,
+         TEAM=FORMCOMPLID_MNH11)
+
+mnh11_filter$WEIGHT_PERES[mnh11_filter$WEIGHT_PERES %in% c(-7, -5)] <- NA
+
+
+#Clean data to remove cases with Infant Death, Incomplete Visits and Unscheduled Visits
+mnh13_filter <- mnh13 %>% 
+  mutate(VISIT_OBSSTDAT = ymd(parse_date_time(VISIT_OBSSTDAT, order = c("%d/%m/%Y","%d-%m-%Y","%Y-%m-%d", "%d-%b-%y", "%d-%m-%y")))) %>% # Convert VISIT_OBSSTDAT to date format
+  filter(INF_VISIT_MNH13 %in% c(1, 2) & # Filter rows where INF_VISIT_MNH13 is 1 or 2
+           INF_VITAL_MNH13 == 1 & # Filter rows where INF_VITAL_MNH13 is 1
+           TYPE_VISIT %in% c(7:12)) %>% # Filter rows where TYPE_VISIT is between 7 and 12
+  arrange(MOMID, PREGID, INFANTID, TYPE_VISIT, VISIT_OBSSTDAT) %>% # Arrange rows by INFANTID, TYPE_VISIT, and VISIT_OBSSTDAT
+  distinct(MOMID, PREGID, INFANTID, TYPE_VISIT, .keep_all = TRUE) %>% # Keep distinct rows based on INFANTID and TYPE_VISIT while retaining all columns
+  select(MOMID, PREGID, INFANTID, TYPE_VISIT,VISIT_OBSSTDAT ,WEIGHT_PERES,FORMCOMPLID_MNH13)  %>% # Select specified columns
+  filter(!(is.na(WEIGHT_PERES)))%>%
+  rename(VISIT_DATE=VISIT_OBSSTDAT,
+         TEAM=FORMCOMPLID_MNH13)
+
+mnh13_filter$WEIGHT_PERES[mnh13_filter$WEIGHT_PERES %in% c(-7, -5)] <- NA
+
+long_inf_weight <- bind_rows(mnh11_filter, mnh13_filter)
+
+
+# Convert long format to wide format
+wide_inf_weight <- pivot_wider(long_inf_weight, 
+                               names_from = TYPE_VISIT, 
+                               values_from = c(WEIGHT_PERES,VISIT_DATE,TEAM), 
+                               id_cols = c(MOMID, PREGID, INFANTID))
+
+wide_inf_weight<- wide_inf_weight %>% select(
+  MOMID,PREGID,INFANTID,VISIT_DATE_6,WEIGHT_PERES_6,TEAM_6,
+  VISIT_DATE_7,WEIGHT_PERES_7,TEAM_7,
+  VISIT_DATE_8,WEIGHT_PERES_8,TEAM_8,
+  VISIT_DATE_9,WEIGHT_PERES_9,TEAM_9,
+  VISIT_DATE_10,WEIGHT_PERES_10,TEAM_10,
+  VISIT_DATE_11,WEIGHT_PERES_11,TEAM_11,
+  VISIT_DATE_12,WEIGHT_PERES_12,TEAM_12)%>%
+  
+  mutate(VISIT_6_VS_7=WEIGHT_PERES_7-WEIGHT_PERES_6,
+         VISIT_7_VS_8=WEIGHT_PERES_8-WEIGHT_PERES_7,
+         VISIT_8_VS_9=WEIGHT_PERES_9-WEIGHT_PERES_8,
+         VISIT_9_VS_10=WEIGHT_PERES_10-WEIGHT_PERES_9,
+         VISIT_10_VS_11=WEIGHT_PERES_11-WEIGHT_PERES_10,
+         VISIT_11_VS_12=WEIGHT_PERES_12-WEIGHT_PERES_11)
+
+
+#*****************************************************************************
+#*Infant Length Query 
+#*****************************************************************************
+
+#Clean data to remove cases with Infant Death, Incomplete Visits and Unscheduled Visits
+length_df <- mnh13 %>% 
+  mutate(VISIT_OBSSTDAT = ymd(parse_date_time(VISIT_OBSSTDAT, order = c("%d/%m/%Y","%d-%m-%Y","%Y-%m-%d", "%d-%b-%y", "%d-%m-%y")))) %>% # Convert VISIT_OBSSTDAT to date format
+  filter(INF_VISIT_MNH13 %in% c(1, 2) & # Filter rows where INF_VISIT_MNH13 is 1 or 2
+           INF_VITAL_MNH13 == 1 & # Filter rows where INF_VITAL_MNH13 is 1
+           TYPE_VISIT %in% c(9:12)) %>% # Filter rows where TYPE_VISIT is between 7 and 12
+  arrange(MOMID, PREGID, INFANTID, TYPE_VISIT, VISIT_OBSSTDAT) %>% # Arrange rows by INFANTID, TYPE_VISIT, and VISIT_OBSSTDAT
+  distinct(MOMID, PREGID, INFANTID, TYPE_VISIT, .keep_all = TRUE) %>% # Keep distinct rows based on INFANTID and TYPE_VISIT while retaining all columns
+  select(MOMID, PREGID, INFANTID, TYPE_VISIT,VISIT_OBSSTDAT,LENGTH_PERES_1 , LENGTH_PERES_2, LENGTH_PERES_3,FORMCOMPLID_MNH13) 
+
+if (nrow(length_df) > 0) {
+  
+  length_df$LENGTH_PERES_1[length_df$LENGTH_PERES_1 %in% c(-7, -5)] <- NA
+  length_df$LENGTH_PERES_2[length_df$LENGTH_PERES_2 %in% c(-7, -5)] <- NA
+  length_df$LENGTH_PERES_3[length_df$LENGTH_PERES_3 %in% c(-7, -5)] <- NA
+  
+  #* Query 1: Is Infant Length decreasing visit by visit?
+  avg_length_df <- length_df %>%
+    mutate(LENGTH_PERES = floor(rowMeans(select(., c(LENGTH_PERES_1, LENGTH_PERES_2)), na.rm = TRUE) * 100) / 100) %>%
+    select(MOMID, PREGID, INFANTID, TYPE_VISIT, LENGTH_PERES,VISIT_OBSSTDAT,FORMCOMPLID_MNH13)%>%
+    rename(VISIT_DATE=VISIT_OBSSTDAT,
+           TEAM=FORMCOMPLID_MNH13)}
+
+# Pivot dataframe wider
+wide_length <- pivot_wider(avg_length_df, 
+                           names_from = TYPE_VISIT, 
+                           values_from =c(LENGTH_PERES,VISIT_DATE,TEAM),
+                           id_cols = c(MOMID, PREGID, INFANTID))
+
+wide_length <- wide_length  %>% select(
+  MOMID,PREGID,INFANTID,
+  VISIT_DATE_9,LENGTH_PERES_9,TEAM_9,
+  VISIT_DATE_10,LENGTH_PERES_10,TEAM_10,
+  VISIT_DATE_11,LENGTH_PERES_11,TEAM_11,
+  VISIT_DATE_12,LENGTH_PERES_12,TEAM_12)%>%
+  
+  mutate(VISIT_9_VS_10=LENGTH_PERES_10-LENGTH_PERES_9,
+         VISIT_10_VS_11=LENGTH_PERES_11-LENGTH_PERES_10,
+         VISIT_11_VS_12=LENGTH_PERES_12-LENGTH_PERES_11)
+
+
+write_xlsx(list("wide_df" = wide_df,
+                "Wide_Inf_Weight" = wide_inf_weight, 
+                "Wide_Length" = wide_length),path = output_path)
