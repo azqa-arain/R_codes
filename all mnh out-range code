@@ -1,0 +1,1222 @@
+# PRISMA ALL Ranges QC Codes
+# Azqa MAzhar
+
+# Load necessary libraries
+library(dplyr)
+library(openxlsx) # For exporting to Excel
+library(lubridate)
+library(readr) # To import CSV File
+# Set the base path with the current date
+base_path <- paste0("~/DESCRIPTIVE_PRISMA/data/21-01-25/data")
+
+files <- c("mnh05.csv", "mnh06.csv", "mnh09.csv", "mnh10.csv", 
+           "mnh11.csv", "mnh13.csv", "mnh14.csv", "mnh19.csv", "mnh20.csv")
+
+# Loop to read files
+for (file in files) {
+  file_path <- file.path(base_path, file)  # Construct full file path
+  assign(file, read_csv(file_path))  # Assign data to the variable name
+}
+
+
+# set the Path to export the Data 
+getwd()
+setwd("~/DESCRIPTIVE_PRISMA/data/21-01-25/output")
+
+##--------MNH05-----------##
+Height <- mnh05.csv %>%
+  filter(HEIGHT_PERES < 137.2| HEIGHT_PERES >	188) %>%
+  filter(!HEIGHT_PERES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,ANT_PEDAT,TYPE_VISIT,ANT_FAC_SPFY_OBSLOC, HEIGHT_PERES)
+
+Weight<-mnh05.csv %>%
+  filter(WEIGHT_PERES < 31|WEIGHT_PERES  >	125) %>%
+  filter(!WEIGHT_PERES  %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,ANT_PEDAT,TYPE_VISIT,ANT_FAC_SPFY_OBSLOC,WEIGHT_PERES)
+
+Muac<-mnh05.csv %>%
+  filter(MUAC_PERES < 11|MUAC_PERES >	47) %>%
+  filter(!MUAC_PERES   %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,ANT_PEDAT,TYPE_VISIT,ANT_FAC_SPFY_OBSLOC, MUAC_PERES )
+
+
+# Remove the old workbook object
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+# Add data frames to the workbook as sheets (if not empty)
+if (nrow(Height) > 0) {
+  addWorksheet(wb, "Height")
+  writeData(wb, "Height", Height)
+}
+
+if (nrow(Weight) > 0) {
+  addWorksheet(wb, "Weight")
+  writeData(wb, "Weight", Weight)
+}
+if (nrow(Muac) > 0) {
+  addWorksheet(wb, "Muac")
+  writeData(wb, "Muac", Muac)
+}
+
+# Save the workbook
+saveWorkbook(wb, "output_05.xlsx", overwrite = TRUE)
+
+message("Data exported to multiple sheets successfully.")
+
+
+##--------mnh06.csv-----------##
+BP1_sytolic <- mnh06.csv %>%
+  filter(BP_SYS_VSORRES_1 < 89 | BP_SYS_VSORRES_1 >	200) %>%
+  filter(!BP_SYS_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_1)
+
+DIFF1 <- mnh06.csv %>%
+  select(MOMID, PREGID, DIAG_VSDAT, TYPE_VISIT, DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_1, BP_DIA_VSORRES_1)%>%
+  mutate(Diff1 = BP_SYS_VSORRES_1 - BP_DIA_VSORRES_1) 
+
+BP1_dystolic<- mnh06.csv %>%
+  filter(BP_DIA_VSORRES_1 < 45 | BP_DIA_VSORRES_1 >	125) %>%
+  filter(!BP_DIA_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,BP_DIA_VSORRES_1)
+
+BP2_sytolic <- mnh06.csv %>%
+  filter(BP_SYS_VSORRES_2 < 89 | BP_SYS_VSORRES_2 >	200) %>%
+  filter(!BP_SYS_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_2)
+
+BP2_dystolic<- mnh06.csv %>%
+  filter(BP_DIA_VSORRES_2 < 45 | BP_DIA_VSORRES_2 >	125) %>%
+  filter(!BP_DIA_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,BP_DIA_VSORRES_2)
+DIFF2 <- mnh06.csv %>%
+  select(MOMID, PREGID, DIAG_VSDAT, TYPE_VISIT, DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_2, BP_DIA_VSORRES_2)  %>%
+  mutate(Diff2 = BP_SYS_VSORRES_2 - BP_DIA_VSORRES_2)
+
+BP3_sytolic <- mnh06.csv %>%
+  filter(BP_SYS_VSORRES_3 < 89 | BP_SYS_VSORRES_3 >	200) %>%
+  filter(!BP_SYS_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_3)
+
+BP3_dystolic<- mnh06.csv %>%
+  filter(BP_DIA_VSORRES_3 < 45 | BP_DIA_VSORRES_3 >	125) %>%
+  filter(!BP_DIA_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,BP_DIA_VSORRES_3)
+
+DIFF3 <- mnh06.csv %>%
+  select(MOMID, PREGID, DIAG_VSDAT, TYPE_VISIT, DIAG_FAC_SPFY_OBSLOC, BP_SYS_VSORRES_3, BP_DIA_VSORRES_3) %>%
+   mutate(Diff3 = BP_SYS_VSORRES_3 - BP_DIA_VSORRES_3)
+Temp1<- mnh06.csv %>%
+  filter(TEMP_VSORRES < 30 | TEMP_VSORRES >	42) %>%
+  filter(!TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,TEMP_VSORRES)
+
+Temp2<- mnh06.csv %>%
+  filter(TEMP_VSORRES_2< 30 | TEMP_VSORRES_2 >	42) %>%
+  filter(!TEMP_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,TEMP_VSORRES_2)
+
+MHR<- mnh06.csv %>%
+  filter(MHR_VSORRES< 50 | MHR_VSORRES>	150) %>%
+  filter(!MHR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,MHR_VSORRES)
+
+RR<- mnh06.csv %>%
+  filter(RR_VSORRES< 12 | RR_VSORRES>30) %>%
+  filter(!RR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,RR_VSORRES)
+
+PULSEOX<- mnh06.csv %>%
+  filter(PULSEOX_VSORRES< 85 |PULSEOX_VSORRES>100) %>%
+  filter(!PULSEOX_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,PULSEOX_VSORRES)
+
+SPHB_masimo<- mnh06.csv %>%
+  filter(SPHB_LBORRES<7 |SPHB_LBORRES>20) %>%
+  filter(!SPHB_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,SPHB_LBORRES)
+
+FHR1<- mnh06.csv %>%
+  filter(FHR_VSORRES_1<60 |FHR_VSORRES_1>190) %>%
+  filter(!FHR_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,FHR_VSORRES_1)
+
+FHR2<- mnh06.csv %>%
+  filter(FHR_VSORRES_2<60 |FHR_VSORRES_2>190) %>%
+  filter(!FHR_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,FHR_VSORRES_2)
+
+FHR3<- mnh06.csv %>%
+  filter(FHR_VSORRES_3<60 |FHR_VSORRES_2>190) %>%
+  filter(!FHR_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,FHR_VSORRES_3)
+
+FHR4<- mnh06.csv %>%
+  filter(FHR_VSORRES_4<60 |FHR_VSORRES_4>190) %>%
+  filter(!FHR_VSORRES_4 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,FHR_VSORRES_4)
+
+HB_POC_HEMOCUE<- mnh06.csv %>%
+  filter(HB_POC_LBORRES<7 |HB_POC_LBORRES>20) %>%
+  filter(!HB_POC_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,HB_POC_LBORRES)
+
+BGLUC_POC<- mnh06.csv %>%
+  filter(BGLUC_POC_MMOLL_LBORRES<3.6 |BGLUC_POC_MMOLL_LBORRES>6.6) %>%
+  filter(!BGLUC_POC_MMOLL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,DIAG_FAC_SPFY_OBSLOC,BGLUC_POC_MMOLL_LBORRES)
+# Define output file path
+#output_file <- "C:/Users/azqa.mazhar/OneDrive - Aga Khan University (1)/Documents/DESCRIPTIVE_PRISMA/data/15-11-24/output/mnh06.csv_ranges.xlsx"
+
+# Remove the old workbook object
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+# Add data frames to the workbook as sheets (if not empty)
+if (nrow(BP1_sytolic) > 0) {
+  addWorksheet(wb, "BP1_sytolic")
+  writeData(wb, "BP1_sytolic", BP1_sytolic)
+}
+
+if (nrow(BP1_dystolic) > 0) {
+  addWorksheet(wb, "BP1_dystolic")
+  writeData(wb, "BP1_dystolic",BP1_dystolic)
+}
+if (nrow(DIFF1) > 0) {
+  addWorksheet(wb, "DIFF1")
+  writeData(wb, "DIFF1", DIFF1)
+}
+
+if (nrow(BP2_sytolic) > 0) {
+  addWorksheet(wb, "BP2_sytolic")
+  writeData(wb, "BP2_sytolic", BP2_sytolic)
+}
+if (nrow(BP2_dystolic) > 0) {
+  addWorksheet(wb, "BP2_dystolic")
+  writeData(wb, "BP2_dystolic",BP2_dystolic)
+}
+if (nrow(DIFF2) > 0) {
+  addWorksheet(wb, "DIFF2")
+  writeData(wb, "DIFF2", DIFF2)
+}
+if (nrow(BP3_sytolic) > 0) {
+  addWorksheet(wb, "BP3_sytolic")
+  writeData(wb, "BP3_sytolic", BP3_sytolic)
+}
+if (nrow(BP3_dystolic) > 0) {
+  addWorksheet(wb, "BP3_dystolic")
+  writeData(wb, "BP3_dystolic",BP3_dystolic)
+}
+if (nrow(DIFF3) > 0) {
+  addWorksheet(wb, "DIFF3")
+  writeData(wb, "DIFF3", DIFF3)
+}
+if (nrow(Temp1) > 0) {
+  addWorksheet(wb, "Temp2")
+  writeData(wb, "Temp1",Temp1)
+}
+if (nrow(Temp2) > 0) {
+  addWorksheet(wb, "Temp2")
+  writeData(wb, "Temp2",Temp2)
+}
+
+if (nrow(MHR) > 0) {
+  addWorksheet(wb, "MHR")
+  writeData(wb, "MHR",MHR)
+}
+
+if (nrow(RR) > 0) {
+  addWorksheet(wb, "RR")
+  writeData(wb, "RR",RR)
+}
+
+if (nrow(PULSEOX) > 0) {
+  addWorksheet(wb, "PULSEOX")
+  writeData(wb, "PULSEOX",PULSEOX)
+}
+
+if (nrow(SPHB_masimo) > 0) {
+  addWorksheet(wb, "SPHB_masimo")
+  writeData(wb, "SPHB_masimo",SPHB_masimo)
+}
+if (nrow(FHR1) > 0) {
+  addWorksheet(wb, "FHR1")
+  writeData(wb, "FHR1",FHR1)
+}
+if (nrow(FHR2) > 0) {
+  addWorksheet(wb, "FHR2")
+  writeData(wb, "FHR2",FHR2)
+}
+if (nrow(FHR3) > 0) {
+  addWorksheet(wb, "FHR3")
+  writeData(wb, "FHR3",FHR3)
+}
+if (nrow(FHR4) > 0) {
+  addWorksheet(wb, "FHR4")
+  writeData(wb, "FHR4",FHR4)
+}
+if (nrow(HB_POC_HEMOCUE) > 0) {
+  addWorksheet(wb, "HB_POC_HEMOCUE")
+  writeData(wb, "HB_POC_HEMOCUE",HB_POC_HEMOCUE)
+}
+if (nrow(BGLUC_POC) > 0) {
+  addWorksheet(wb, "BGLUC_POC")
+  writeData(wb, "BGLUC_POC",BGLUC_POC)
+}
+
+# Save the workbook
+saveWorkbook(wb, "output_06.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+##--------mnh09.csv-----------##
+
+Max_Tempature <- mnh09.csv %>%
+  filter(MAX_TEMP_VSORRES < 37.5 | MAX_TEMP_VSORRES >	42) %>%
+  filter(!MAX_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT,MAX_TEMP_VSORRES)
+
+Low_Tempature <- mnh09.csv %>%
+  filter(LOW_TEMP_VSORRES < 30 | LOW_TEMP_VSORRES >	35.9) %>%
+  filter(!LOW_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT,LOW_TEMP_VSORRES)
+
+RR<- mnh09.csv %>%
+  filter(RR_VSORRES < 24 | RR_VSORRES >	80) %>%
+  filter(!RR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT,RR_VSORRES)
+
+BP1_sytolic <- mnh09.csv %>%
+  filter(BP_SYS_VSORRES_1 < 60 | BP_SYS_VSORRES_1 >	200) %>%
+  filter(!BP_SYS_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT, BP_SYS_VSORRES_1)
+
+BP1_dystolic<- mnh09.csv %>%
+  filter(BP_DIA_VSORRES_1 < 40 | BP_DIA_VSORRES_1 >	110) %>%
+  filter(!BP_DIA_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT,BP_DIA_VSORRES_1)
+
+BP2_sytolic <- mnh09.csv %>%
+  filter(BP_SYS_VSORRES_2 < 60  | BP_SYS_VSORRES_2 >200) %>%
+  filter(!BP_SYS_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT, BP_SYS_VSORRES_2)
+
+BP2_dystolic<- mnh09.csv %>%
+  filter(BP_DIA_VSORRES_2 < 40 | BP_DIA_VSORRES_2 >	110) %>%
+  filter(!BP_DIA_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT, BP_DIA_VSORRES_2)
+
+BP3_sytolic <- mnh09.csv %>%
+  filter(BP_SYS_VSORRES_3 < 60 | BP_SYS_VSORRES_3 > 200) %>%  # Keep values less than 60 or greater than 200
+  filter(!BP_SYS_VSORRES_3 %in% c(-7, -5)) %>%  # Remove invalid values like -7 and -5
+  select(MOMID, PREGID, MAT_LD_OHOSTDAT, BP_SYS_VSORRES_3)  
+
+
+BP3_dystolic<- mnh09.csv %>%
+  filter(BP_DIA_VSORRES_3 < 40 | BP_DIA_VSORRES_3 >	110) %>%
+  filter(!BP_DIA_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT, BP_DIA_VSORRES_3)
+
+PPH_ESTIMATE<- mnh09.csv %>%
+  filter(PPH_ESTIMATE_FAORRES < 100 | PPH_ESTIMATE_FAORRES  >	2500) %>%
+  filter(!PPH_ESTIMATE_FAORRES  %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,MAT_LD_OHOSTDAT, PPH_ESTIMATE_FAORRES )
+# Remove the old workbook object
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+if (nrow(Max_Tempature) > 0) {
+  addWorksheet(wb, "Max_Tempature")
+  writeData(wb, "Max_Tempature",Max_Tempature)
+}
+if (nrow(Low_Tempature) > 0) {
+  addWorksheet(wb, "Low_Tempature")
+  writeData(wb, "Low_Tempature",Low_Tempature)
+}
+if (nrow(RR) > 0) {
+  addWorksheet(wb, "RR")
+  writeData(wb, "RR",RR)
+}
+if (nrow(BP1_sytolic) > 0) {
+  addWorksheet(wb, "BP1_sytolic")
+  writeData(wb, "BP1_sytolic",BP1_sytolic)
+}
+if (nrow(BP1_dystolic) > 0) {
+  addWorksheet(wb, "BP1_dystolic")
+  writeData(wb, "BP1_dystolic",BP1_dystolic)
+}
+if (nrow(BP2_sytolic) > 0) {
+  addWorksheet(wb, "BP2_sytolic")
+  writeData(wb, "BP2_sytolic",BP2_sytolic)
+}
+if (nrow(BP2_dystolic) > 0) {
+  addWorksheet(wb, "BP2_dystolic")
+  writeData(wb, "BP2_dystolic",BP2_dystolic)
+}
+if (nrow(BP3_sytolic) > 0) {
+  addWorksheet(wb, "BP3_sytolic")
+  writeData(wb, "BP3_sytolic",BP3_sytolic)
+}
+if (nrow(BP3_dystolic) > 0) {
+  addWorksheet(wb, "BP3_dystolic")
+  writeData(wb, "BP3_dystolic",BP3_dystolic)
+}
+if (nrow(PPH_ESTIMATE) > 0) {
+  addWorksheet(wb, "PPH_ESTIMATE")
+  writeData(wb, "PPH_ESTIMATE",PPH_ESTIMATE)
+}
+# Save the workbook
+saveWorkbook(wb, "output_09.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+
+##--------mnh10.csv-----------##
+
+Max_Tempature <- mnh10.csv %>%
+  filter(MAX_TEMP_VSORRES < 37.5 | MAX_TEMP_VSORRES >	42) %>%
+  filter(!MAX_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,MAX_TEMP_VSORRES)
+
+Low_Tempature <- mnh10.csv %>%
+  filter(LOW_TEMP_VSORRES < 30 | LOW_TEMP_VSORRES >	36) %>%
+  filter(!LOW_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,MAX_TEMP_VSORRES)
+
+FAST_HR<- mnh10.csv %>%
+  filter(FAST_HR_FAORRES < 100 | FAST_HR_FAORRES >	190) %>%
+  filter(!FAST_HR_FAORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,FAST_HR_FAORRES)
+
+RR_DISTRESS<- mnh10.csv %>%
+  filter(RR_DISTRESS_FAORRES < 24 | RR_DISTRESS_FAORRES>80) %>%
+  filter(!RR_DISTRESS_FAORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,RR_DISTRESS_FAORRES)
+
+BP1_sytolic <- mnh10.csv %>%
+  filter(BP_SYS_VSORRES_1 < 60 | BP_SYS_VSORRES_1 >	200) %>%
+  filter(!BP_SYS_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT, BP_SYS_VSORRES_1)
+
+BP1_dystolic<- mnh10.csv %>%
+  filter(BP_DIA_VSORRES_1 < 40 | BP_DIA_VSORRES_1 >	110) %>%
+  filter(!BP_DIA_VSORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,BP_DIA_VSORRES_1)
+
+BP2_sytolic <- mnh10.csv %>%
+  filter(BP_SYS_VSORRES_2 < 60 | BP_SYS_VSORRES_2 >	200) %>%
+  filter(!BP_SYS_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT, BP_SYS_VSORRES_2)
+
+BP2_dystolic<- mnh10.csv %>%
+  filter(BP_DIA_VSORRES_2 < 40 | BP_DIA_VSORRES_1 >	110) %>%
+  filter(!BP_DIA_VSORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,BP_DIA_VSORRES_2)
+
+BP3_sytolic <- mnh10.csv %>%
+  filter(BP_SYS_VSORRES_3 < 60 | BP_SYS_VSORRES_3 >	200) %>%
+  filter(!BP_SYS_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT, BP_SYS_VSORRES_3)
+
+BP3_dystolic<- mnh10.csv %>%
+  filter(BP_DIA_VSORRES_3 < 40 | BP_DIA_VSORRES_3 >	110) %>%
+  filter(!BP_DIA_VSORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,VISIT_OBSSTDAT,BP_DIA_VSORRES_3)
+
+# Remove the old workbook object
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+if (nrow(Max_Tempature) > 0) {
+  addWorksheet(wb, "Max_Tempature")
+  writeData(wb, "Max_Tempature",Max_Tempature)}
+
+if (nrow(Low_Tempature) > 0) {
+  addWorksheet(wb, "Low_Tempature")
+  writeData(wb, "Low_Tempature",Low_Tempature)
+}
+if (nrow(FAST_HR) > 0) {
+  addWorksheet(wb, "FAST_HR")
+  writeData(wb, "FAST_HR",FAST_HR)
+}
+if (nrow(RR_DISTRESS) > 0) {
+  addWorksheet(wb, "RR_DISTRESS")
+  writeData(wb, "RR_DISTRESS",RR_DISTRESS)
+}
+if (nrow(BP1_sytolic) > 0) {
+  addWorksheet(wb, "BP1_sytolic")
+  writeData(wb, "BP1_sytolic",BP1_sytolic)
+}
+if (nrow(BP1_dystolic) > 0) {
+  addWorksheet(wb, "BP1_dystolic")
+  writeData(wb, "BP1_dystolic",BP1_dystolic)
+}
+if (nrow(BP2_sytolic) > 0) {
+  addWorksheet(wb, "BP2_sytolic")
+  writeData(wb, "BP2_sytolic",BP2_sytolic)
+}
+if (nrow(BP2_dystolic) > 0) {
+  addWorksheet(wb, "BP2_dystolic")
+  writeData(wb, "BP2_dystolic",BP2_dystolic)}
+
+if (nrow(BP3_sytolic) > 0) {
+  addWorksheet(wb, "BP3_sytolic")
+  writeData(wb, "BP3_sytolic",BP3_sytolic)
+}
+if (nrow(BP3_dystolic) > 0) {
+  addWorksheet(wb, "BP3_dystolic")
+  writeData(wb, "BP3_dystolic",BP3_dystolic)
+}
+  # Save the workbook
+  saveWorkbook(wb, "output_10.xlsx", overwrite = TRUE)
+  message("Data exported to multiple sheets successfully.")
+  
+##--------MNH11-----------##
+BW_FACILITY<- mnh11.csv %>%
+    filter(BW_FAORRES_REPORT < 1000 | BW_FAORRES_REPORT>5500) %>%
+    filter(!BW_FAORRES_REPORT %in% c(-7, -5)) %>%
+    select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11, BW_FAORRES_REPORT,SEX_INF)
+
+BW_PRISMA<- mnh11.csv %>%
+  filter(BW_FAORRES < 1000 | BW_FAORRES>5500) %>%
+  filter(!BW_FAORRES %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11, BW_FAORRES,SEX_INF)
+
+LENGTH_1<- mnh11.csv %>%
+  filter(LENGTH_FAORRES_1< 30| LENGTH_FAORRES_1>70) %>%
+  filter(!LENGTH_FAORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,LENGTH_FAORRES_1)
+
+LENGTH_2<- mnh11.csv %>%
+  filter(LENGTH_FAORRES_2< 30| LENGTH_FAORRES_2>70) %>%
+  filter(!LENGTH_FAORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,LENGTH_FAORRES_2)
+
+LENGTH_3<- mnh11.csv %>%
+  filter(LENGTH_FAORRES_3< 30| LENGTH_FAORRES_3>70) %>%
+  filter(!LENGTH_FAORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,LENGTH_FAORRES_3)
+
+HC_1<-mnh11.csv%>%
+  filter(HC_FAORRES_1 <25| HC_FAORRES_1 >50) %>%
+  filter(!HC_FAORRES_1 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,HC_FAORRES_1)
+HC_2<-mnh11.csv%>%
+  filter(HC_FAORRES_2 <25| HC_FAORRES_2>50) %>%
+  filter(!HC_FAORRES_2 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,HC_FAORRES_2)
+
+HC_3<-mnh11.csv%>%
+  filter(HC_FAORRES_3 <25| HC_FAORRES_3>50) %>%
+  filter(!HC_FAORRES_3 %in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,INF_VISIT_72HR_MNH11,HC_FAORRES_3)
+
+TEMP_1<-mnh11.csv%>%
+  filter(TEMP_VSORRES <32| TEMP_VSORRES>42) %>%
+  filter(!TEMP_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TEMP_VSORRES)
+
+TEMP_2<-mnh11.csv%>%
+  filter(TEMP_VSORRES_2 <32| TEMP_VSORRES_2>42) %>%
+  filter(!TEMP_VSORRES_2%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TEMP_VSORRES_2)
+
+TBILIRUBIN<-mnh11.csv%>%
+  filter(TBILIRUBIN_UMOLL_LBORRES<0| TBILIRUBIN_UMOLL_LBORRES>510) %>%
+  filter(!TBILIRUBIN_UMOLL_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TBILIRUBIN_UMOLL_LBORRES)
+
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+if (nrow(BW_FACILITY) > 0) {
+  addWorksheet(wb, "BW_FACILITY")
+  writeData(wb, "BW_FACILITY",BW_FACILITY)}
+
+if (nrow(BW_PRISMA) > 0) {
+  addWorksheet(wb, "BW_PRISMA")
+  writeData(wb, "BW_PRISMA",BW_PRISMA)}
+
+if (nrow(LENGTH_1) > 0) {
+  addWorksheet(wb, "LENGTH_1")
+  writeData(wb, "LENGTH_1",LENGTH_1)}
+
+if (nrow(LENGTH_2) > 0) {
+  addWorksheet(wb, "LENGTH_2")
+  writeData(wb, "LENGTH_2",LENGTH_2)}
+
+if (nrow(LENGTH_3) > 0) {
+  addWorksheet(wb, "LENGTH_3")
+  writeData(wb, "LENGTH_3",LENGTH_3)}
+
+if (nrow(HC_1) > 0) {
+  addWorksheet(wb, "HC_1")
+  writeData(wb, "HC_1",HC_1)}
+
+if (nrow(HC_2) > 0) {
+  addWorksheet(wb, "HC_2")
+  writeData(wb, "HC_2",HC_2)}
+
+if (nrow(HC_3) > 0) {
+  addWorksheet(wb, "HC_3")
+  writeData(wb, "HC_3",HC_3)}
+
+if (nrow(TEMP_1) > 0) {
+  addWorksheet(wb, "TEMP_1")
+  writeData(wb, "TEMP_1",TEMP_1)}
+
+if (nrow(TEMP_2) > 0) {
+  addWorksheet(wb, "TEMP_2")
+  writeData(wb, "TEMP_2",TEMP_2)}
+
+if (nrow(TBILIRUBIN) > 0) {
+  addWorksheet(wb, "TBILIRUBIN")
+  writeData(wb, "TBILIRUBIN",TBILIRUBIN)}
+
+# Save the workbook
+saveWorkbook(wb, "output_11.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+##--------MNH13-----------##
+
+Weight<-mnh13.csv%>%
+  filter(WEIGHT_PERES <2000|WEIGHT_PERES>25000) %>%
+  filter(!WEIGHT_PERES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,WEIGHT_PERES,FORMCOMPLID_MNH13)
+
+Length_1<-mnh13.csv%>%
+  filter(LENGTH_PERES_1 <30|LENGTH_PERES_1>85) %>%
+  filter(!LENGTH_PERES_1%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,LENGTH_PERES_1,FORMCOMPLID_MNH13)
+
+Length_2<-mnh13.csv%>%
+  filter(LENGTH_PERES_2 <30|LENGTH_PERES_2>85) %>%
+  filter(!LENGTH_PERES_2%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,LENGTH_PERES_2,FORMCOMPLID_MNH13)
+
+Length_3<-mnh13.csv%>%
+  filter(LENGTH_PERES_3 <30|LENGTH_PERES_3>85) %>%
+  filter(!LENGTH_PERES_3%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,LENGTH_PERES_3,FORMCOMPLID_MNH13)
+
+HC_1<-mnh13.csv%>%
+  filter(HC_PERES_1 <30|HC_PERES_1>50) %>%
+  filter(!HC_PERES_1%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,HC_PERES_1,FORMCOMPLID_MNH13)
+
+HC_2<-mnh13.csv%>%
+  filter(HC_PERES_2 <30|HC_PERES_2>50) %>%
+  filter(!HC_PERES_2%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,HC_PERES_2,FORMCOMPLID_MNH13)
+
+HC_3<-mnh13.csv%>%
+  filter(HC_PERES_3 <30|HC_PERES_3>50) %>%
+  filter(!HC_PERES_3%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,HC_PERES_3,FORMCOMPLID_MNH13)
+
+MUAC_1<-mnh13.csv%>%
+  filter(MUAC_PERES_1<8|MUAC_PERES_1>15) %>%
+  filter(!MUAC_PERES_1%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,MUAC_PERES_1,FORMCOMPLID_MNH13)
+
+MUAC_2<-mnh13.csv%>%
+  filter(MUAC_PERES_2<8|MUAC_PERES_2>15) %>%
+  filter(!MUAC_PERES_2%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,MUAC_PERES_2,FORMCOMPLID_MNH13)
+
+MUAC_3<-mnh13.csv%>%
+  filter(MUAC_PERES_3<8|MUAC_PERES_3>15) %>%
+  filter(!MUAC_PERES_3%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,MUAC_PERES_3,FORMCOMPLID_MNH13)
+
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+if (nrow(Weight) > 0) {
+  addWorksheet(wb, "Weight")
+  writeData(wb, "Weight",Weight)}
+
+if (nrow(Length_1) > 0) {
+  addWorksheet(wb, "Length_1")
+  writeData(wb, "Length_1",Length_1)}
+
+if (nrow(Length_2) > 0) {
+  addWorksheet(wb, "Length_2")
+  writeData(wb, "Length_2",Length_2)}
+
+if (nrow(Length_3) > 0) {
+  addWorksheet(wb, "Length_3")
+  writeData(wb, "Length_3",Length_3)}
+
+if (nrow(HC_1) > 0) {
+  addWorksheet(wb, "HC_1")
+  writeData(wb, "HC_1",HC_1)}
+
+if (nrow(HC_2) > 0) {
+  addWorksheet(wb, "HC_2")
+  writeData(wb, "HC_2",HC_2)}
+
+if (nrow(HC_3) > 0) {
+  addWorksheet(wb, "HC_3")
+  writeData(wb, "HC_3",HC_3)}
+
+if (nrow(MUAC_1) > 0) {
+  addWorksheet(wb, "MUAC_1")
+  writeData(wb, "MUAC_1",MUAC_1)}
+
+if (nrow(MUAC_2) > 0) {
+  addWorksheet(wb, "MUAC_2")
+  writeData(wb, "MUAC_2",MUAC_2)}
+
+if (nrow(MUAC_3) > 0) {
+  addWorksheet(wb, "MUAC_3")
+  writeData(wb, "MUAC_3",MUAC_3)}
+
+# Save the workbook
+saveWorkbook(wb, "output_13.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+##--------MNH14-----------##
+
+HR<-mnh14.csv%>%
+  filter(HR_VSORRES<60|HR_VSORRES>190) %>%
+  filter(!HR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,HR_VSORRES,FORMCOMPLID_MNH14)
+
+PULSEOX<-mnh14.csv%>%
+  filter(PULSEOX_VSORRES<85|PULSEOX_VSORRES>100) %>%
+  filter(!PULSEOX_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,INFANTID,VISIT_OBSSTDAT,TYPE_VISIT,PULSEOX_VSORRES,FORMCOMPLID_MNH14)
+
+
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+if (nrow(HR) > 0) {
+  addWorksheet(wb, "HR")
+  writeData(wb, "HR",HR)}
+
+if (nrow(PULSEOX) > 0) {
+  addWorksheet(wb, "PULSEOX")
+  writeData(wb, "PULSEOX",PULSEOX)}
+# Save the workbook
+saveWorkbook(wb, "output_14.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+
+##--------MNH19-----------##
+
+TEMP<-mnh19.csv%>%
+  filter(TEMP_VSORRES<30|TEMP_VSORRES>42) %>%
+  filter(!TEMP_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,TEMP_VSORRES,FORMCOMPLID_MNH19)
+
+Max_Tempature<-mnh19.csv%>%
+  filter(MAX_TEMP_VSORRES<38|MAX_TEMP_VSORRES>42) %>%
+  filter(!MAX_TEMP_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,MAX_TEMP_VSORRES,FORMCOMPLID_MNH19)
+
+Low_Tempature<-mnh19.csv%>%
+  filter(LOW_TEMP_VSORRES<30|LOW_TEMP_VSORRES>36) %>%
+  filter(!LOW_TEMP_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,LOW_TEMP_VSORRES,FORMCOMPLID_MNH19)
+
+MHR<-mnh19.csv%>%
+  filter(MHR_VSORRES<40|MHR_VSORRES>170) %>%
+  filter(!MHR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,MHR_VSORRES,FORMCOMPLID_MNH19)
+
+MAX_MHR<-mnh19.csv%>%
+  filter(MAX_MHR_VSORRES<40|MAX_MHR_VSORRES>170) %>%
+  filter(!MAX_MHR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,MAX_MHR_VSORRES,FORMCOMPLID_MNH19)
+RR<-mnh19.csv%>%
+  filter(RR_VSORRES<5|RR_VSORRES>40) %>%
+  filter(!RR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,RR_VSORRES,FORMCOMPLID_MNH19)
+MAX_RR<-mnh19.csv%>%
+  filter(MAX_RR_VSORRES<5|MAX_RR_VSORRES>40) %>%
+  filter(!MAX_RR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,MAX_RR_VSORRES,FORMCOMPLID_MNH19)
+
+PULSEOX<-mnh19.csv%>%
+  filter(PULSEOX_VSORRES<85|PULSEOX_VSORRES>100) %>%
+  filter(!PULSEOX_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,PULSEOX_VSORRES,FORMCOMPLID_MNH19)
+LOW_PULSEOX<-mnh19.csv%>%
+  filter(LOW_PULSEOX_VSORRES<85|LOW_PULSEOX_VSORRES>100) %>%
+  filter(!LOW_PULSEOX_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,LOW_PULSEOX_VSORRES,FORMCOMPLID_MNH19)
+
+BP_systolic<-mnh19.csv%>%
+  filter(BP_SYS_VSORRES<65|BP_SYS_VSORRES>200) %>%
+  filter(!BP_SYS_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_SYS_VSORRES,FORMCOMPLID_MNH19)
+
+BP_Dystolic<-mnh19.csv%>%
+  filter(BP_DIA_VSORRES<45|BP_DIA_VSORRES>110) %>%
+  filter(!BP_DIA_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_DIA_VSORRES,FORMCOMPLID_MNH19)
+
+BP_sys_GT120<-mnh19.csv%>%
+  filter(BP_GT120_SYS_VSORRES<121|BP_GT120_SYS_VSORRES>200) %>%
+  filter(!BP_GT120_SYS_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_GT120_SYS_VSORRES,FORMCOMPLID_MNH19)
+
+BP_Dia_GT120<-mnh19.csv%>%
+  filter(BP_GT120_DIA_VSORRES<40|BP_GT120_DIA_VSORRES>110) %>%
+  filter(!BP_GT120_DIA_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_GT120_DIA_VSORRES,FORMCOMPLID_MNH19)
+
+BP_sys_GT90<-mnh19.csv%>%
+  filter(BP_GT90_SYS_VSORRES<60|BP_GT90_SYS_VSORRES>200) %>%
+  filter(!BP_GT90_SYS_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_GT90_SYS_VSORRES,FORMCOMPLID_MNH19)
+
+BP_Dia_GT90<-mnh19.csv%>%
+  filter(BP_GT90_DIA_VSORRES<91|BP_GT90_DIA_VSORRES>110) %>%
+  filter(!BP_GT90_DIA_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_GT90_DIA_VSORRES,FORMCOMPLID_MNH19)
+
+BP_sys_LT90<-mnh19.csv%>%
+  filter(BP_LT90_SYS_VSORRES<60|BP_LT90_SYS_VSORRES>89) %>%
+  filter(!BP_LT90_SYS_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_LT90_SYS_VSORRES,FORMCOMPLID_MNH19)
+
+BP_Dia_LT90<-mnh19.csv%>%
+  filter(BP_LT90_DIA_VSORRES<40|BP_LT90_DIA_VSORRES>110) %>%
+  filter(!BP_LT90_DIA_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,BP_LT90_DIA_VSORRES,FORMCOMPLID_MNH19)
+
+FHR<-mnh19.csv%>%
+  filter(FHR_VSORRES<60|FHR_VSORRES>190) %>%
+  filter(!FHR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,FHR_VSORRES,FORMCOMPLID_MNH19)
+
+MAX_FHR<-mnh19.csv%>%
+  filter(MAX_FHR_VSORRES<60|MAX_FHR_VSORRES>190) %>%
+  filter(!MAX_FHR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,MAX_FHR_VSORRES,FORMCOMPLID_MNH19)
+LOW_FHR<-mnh19.csv%>%
+  filter(LOW_FHR_VSORRES<60|LOW_FHR_VSORRES>190) %>%
+  filter(!LOW_FHR_VSORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,LOW_FHR_VSORRES,FORMCOMPLID_MNH19)
+CBC_HB<-mnh19.csv%>%
+  filter(CBC_HB_LBORRES<1|CBC_HB_LBORRES>20) %>%
+  filter(!CBC_HB_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_HB_LBORRES,FORMCOMPLID_MNH19)
+CBC_HCT<-mnh19.csv%>%
+  filter(CBC_HCT_LBORRES<10|CBC_HCT_LBORRES>50) %>%
+  filter(!CBC_HCT_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_HCT_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_WBC<-mnh19.csv%>%
+  filter(CBC_WBC_LBORRES<1000|CBC_WBC_LBORRES>20000) %>%
+  filter(!CBC_WBC_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_WBC_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_NEU<-mnh19.csv%>%
+  filter(CBC_NEU_PCT_LBORRES<15|CBC_NEU_PCT_LBORRES>85) %>%
+  filter(!CBC_NEU_PCT_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_NEU_PCT_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_NEU_full<-mnh19.csv%>%
+  filter(CBC_NEU_FCC_LBORRES<500|CBC_NEU_FCC_LBORRES>8000) %>%
+  filter(!CBC_NEU_FCC_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_NEU_FCC_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_LYMPH<-mnh19.csv%>%
+  filter(CBC_LYMPH_PCT_LBORRES<5|CBC_LYMPH_PCT_LBORRES>70) %>%
+  filter(!CBC_LYMPH_PCT_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_LYMPH_PCT_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_LYMPH_full<-mnh19.csv%>%
+  filter(CBC_LYMPH_LBORRES<500|CBC_LYMPH_LBORRES>4800) %>%
+  filter(!CBC_LYMPH_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_LYMPH_LBORRES,FORMCOMPLID_MNH19)
+
+CBC_LYMPH_full<-mnh19.csv%>%
+  filter(CBC_LYMPH_LBORRES<500|CBC_LYMPH_LBORRES>4800) %>%
+  filter(!CBC_LYMPH_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CBC_LYMPH_LBORRES,FORMCOMPLID_MNH19)
+
+HB_POC<-mnh19.csv%>%
+  filter(HB_POC_LBORRES<1|HB_POC_LBORRES>20) %>%
+  filter(!HB_POC_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,HB_POC_LBORRES,FORMCOMPLID_MNH19)
+
+Creat_mg<-mnh19.csv%>%
+  filter(CREAT_mgdl_LBORRES<1|CREAT_mgdl_LBORRES>20) %>%
+  filter(!CREAT_mgdl_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CREAT_mgdl_LBORRES,FORMCOMPLID_MNH19)
+
+Creat_mol<-mnh19.csv%>%
+  filter(CREAT_LBORRESU<35|CREAT_LBORRESU>80) %>%
+  filter(!CREAT_LBORRESU%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,CREAT_LBORRESU,FORMCOMPLID_MNH19)
+
+AST_UL<-mnh19.csv%>%
+  filter(AST_ul_LBORRES<3|AST_ul_LBORRES>60) %>%
+  filter(!AST_ul_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,AST_ul_LBORRES,FORMCOMPLID_MNH19)
+AST<-mnh19.csv%>%
+  filter(AST_LBORRESU<0.5|AST_LBORRESU>0.63) %>%
+  filter(!AST_LBORRESU%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,AST_LBORRESU,FORMCOMPLID_MNH19)
+
+ALT_UL<-mnh19.csv%>%
+  filter(ALT_ul_LBORRES<2|ALT_ul_LBORRES>55) %>%
+  filter(!ALT_ul_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,ALT_ul_LBORRES,FORMCOMPLID_MNH19)
+
+ALT_Ukatl<-mnh19.csv%>%
+  filter(ALT_ukatl_LBORRESU<0.2|ALT_ukatl_LBORRESU>0.92) %>%
+  filter(!ALT_ukatl_LBORRESU%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,ALT_ukatl_LBORRESU,FORMCOMPLID_MNH19)
+
+HIV<-mnh19.csv%>%
+  filter(HIV_VLOAD_LBORRES<0|HIV_VLOAD_LBORRES>1000000) %>%
+  filter(!HIV_VLOAD_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID,PREGID,OBSSTDAT,OHOSTDAT,MAT_EST_OHOSTDAT,HIV_VLOAD_LBORRES,FORMCOMPLID_MNH19)
+
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+if (nrow(TEMP) > 0) {
+  addWorksheet(wb, "TEMP")
+  writeData(wb, "TEMP", TEMP)
+}
+
+if (nrow(Max_Tempature) > 0) {
+  addWorksheet(wb, "Max_Tempature")
+  writeData(wb, "Max_Tempature", Max_Tempature)
+}
+
+if (nrow(Low_Tempature) > 0) {
+  addWorksheet(wb, "Low_Tempature")
+  writeData(wb, "Low_Tempature", Low_Tempature)
+}
+
+if (nrow(MHR) > 0) {
+  addWorksheet(wb, "MHR")
+  writeData(wb, "MHR", MHR)
+}
+
+if (nrow(MAX_MHR) > 0) {
+  addWorksheet(wb, "MAX_MHR")
+  writeData(wb, "MAX_MHR", MAX_MHR)
+}
+
+if (nrow(RR) > 0) {
+  addWorksheet(wb, "RR")
+  writeData(wb, "RR", RR)
+}
+
+if (nrow(MAX_RR) > 0) {
+  addWorksheet(wb, "MAX_RR")
+  writeData(wb, "MAX_RR", MAX_RR)
+}
+
+if (nrow(PULSEOX) > 0) {
+  addWorksheet(wb, "PULSEOX")
+  writeData(wb, "PULSEOX", PULSEOX)
+}
+
+if (nrow(LOW_PULSEOX) > 0) {
+  addWorksheet(wb, "LOW_PULSEOX")
+  writeData(wb, "LOW_PULSEOX", LOW_PULSEOX)
+}
+
+if (nrow(BP_systolic) > 0) {
+  addWorksheet(wb, "BP_systolic")
+  writeData(wb, "BP_systolic", BP_systolic)
+}
+
+if (nrow(BP_Dystolic) > 0) {
+  addWorksheet(wb, "BP_Dystolic")
+  writeData(wb, "BP_Dystolic", BP_Dystolic)
+}
+
+if (nrow(BP_sys_GT120) > 0) {
+  addWorksheet(wb, "BP_GT120_SYS_VSORRES")
+  writeData(wb, "BP_GT120_SYS_VSORRES", BP_sys_GT120)
+}
+
+if (nrow(BP_Dia_GT120) > 0) {
+  addWorksheet(wb, "BP_GT120_DIA_VSORRES")
+  writeData(wb, "BP_GT120_DIA_VSORRES", BP_Dia_GT120)
+}
+
+if (nrow(BP_sys_GT90) > 0) {
+  addWorksheet(wb, "BP_GT90_SYS_VSORRES")
+  writeData(wb, "BP_GT90_SYS_VSORRES", BP_sys_GT90)
+}
+
+# BP_GT90_DIA_VSORRES
+if (nrow(BP_Dia_GT90) > 0) {
+  addWorksheet(wb, "BP_GT90_DIA_VSORRES")
+  writeData(wb, "BP_GT90_DIA_VSORRES", BP_Dia_GT90)
+}
+
+# BP_LT90_SYS_VSORRES
+if (nrow(BP_sys_LT90) > 0) {
+  addWorksheet(wb, "BP_LT90_SYS_VSORRES")
+  writeData(wb, "BP_LT90_SYS_VSORRES", BP_sys_LT90)
+}
+
+# BP_LT90_DIA_VSORRES
+if (nrow(BP_Dia_LT90) > 0) {
+  addWorksheet(wb, "BP_LT90_DIA_VSORRES")
+  writeData(wb, "BP_LT90_DIA_VSORRES", BP_Dia_LT90)
+}
+
+# FHR_VSORRES
+if (nrow(FHR) > 0) {
+  addWorksheet(wb, "FHR_VSORRES")
+  writeData(wb, "FHR_VSORRES", FHR)
+}
+
+# MAX_FHR_VSORRES
+if (nrow(MAX_FHR) > 0) {
+  addWorksheet(wb, "MAX_FHR_VSORRES")
+  writeData(wb, "MAX_FHR_VSORRES", MAX_FHR)
+}
+
+# LOW_FHR_VSORRES
+if (nrow(LOW_FHR) > 0) {
+  addWorksheet(wb, "LOW_FHR_VSORRES")
+  writeData(wb, "LOW_FHR_VSORRES", LOW_FHR)
+}
+
+# CBC_HB_LBORRES
+if (nrow(CBC_HB) > 0) {
+  addWorksheet(wb, "CBC_HB_LBORRES")
+  writeData(wb, "CBC_HB_LBORRES", CBC_HB)
+}
+
+if (nrow(CBC_HCT) > 0) {
+  addWorksheet(wb, "CBC_HCT_LBORRES")
+  writeData(wb, "CBC_HCT_LBORRES", CBC_HCT)
+}
+
+if (nrow(CBC_WBC) > 0) {
+  addWorksheet(wb, "CBC_WBC_LBORRES")
+  writeData(wb, "CBC_WBC_LBORRES", CBC_WBC)
+}
+
+if (nrow(CBC_NEU) > 0) {
+  addWorksheet(wb, "CBC_NEU_PCT_LBORRES")
+  writeData(wb, "CBC_NEU_PCT_LBORRES", CBC_NEU)
+}
+
+if (nrow(CBC_NEU_full) > 0) {
+  addWorksheet(wb, "CBC_NEU_FCC_LBORRES")
+  writeData(wb, "CBC_NEU_FCC_LBORRES", CBC_NEU_full)
+}
+
+if (nrow(CBC_LYMPH) > 0) {
+  addWorksheet(wb, "CBC_LYMPH_PCT_LBORRES")
+  writeData(wb, "CBC_LYMPH_PCT_LBORRES", CBC_LYMPH)
+}
+
+if (nrow(CBC_LYMPH_full) > 0) {
+  addWorksheet(wb, "CBC_LYMPH_LBORRES")
+  writeData(wb, "CBC_LYMPH_LBORRES", CBC_LYMPH_full)
+}
+if (nrow(HB_POC) > 0) {
+  addWorksheet(wb, "HB_POC_LBORRES")
+  writeData(wb, "HB_POC_LBORRES", HB_POC)
+}
+
+if (nrow(Creat_mg) > 0) {
+  addWorksheet(wb, "CREAT_mgdl_LBORRES")
+  writeData(wb, "CREAT_mgdl_LBORRES", Creat_mg)
+}
+if (nrow(Creat_mol) > 0) {
+  addWorksheet(wb, "CREAT_mol_LBORRES")
+  writeData(wb, "CREAT_mol_LBORRES", Creat_mol)
+}
+if (nrow(AST_UL) > 0) {
+  addWorksheet(wb, "AST_UL_LBORRES")
+  writeData(wb, "AST_UL_LBORRES", AST_UL)
+}
+if (nrow(AST) > 0) {
+  addWorksheet(wb, "AST_LBORRES")
+  writeData(wb, "AST_LBORRES", AST)
+}
+if (nrow(ALT_UL) > 0) {
+  addWorksheet(wb, "ALT_UL_LBORRES")
+  writeData(wb, "ALT_UL_LBORRES", ALT_UL)
+}
+
+if (nrow(ALT_Ukatl) > 0) {
+  addWorksheet(wb, "ALT_Ukatl_LBORRES")
+  writeData(wb, "ALT_Ukatl_LBORRES", ALT_Ukatl)
+}
+if (nrow(HIV) > 0) {
+  addWorksheet(wb, "HIV_VLOAD_LBORRES")
+  writeData(wb, "HIV_VLOAD_LBORRES", HIV)
+}
+# Save the workbook
+saveWorkbook(wb, "output_19.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
+
+##--------MNH20-----------##
+TEMP<- mnh20.csv %>%
+  filter(TEMP_VSORRES<30 | TEMP_VSORRES >42.1) %>%
+  filter(!TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT, TEMP_VSORRES)
+
+MAX_TEMP<- mnh20.csv %>%
+  filter(MAX_TEMP_VSORRES < 38 | MAX_TEMP_VSORRES>42) %>%
+  filter(!MAX_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT, MAX_TEMP_VSORRES)
+
+LOW_TEMP<- mnh20.csv %>%
+  filter(LOW_TEMP_VSORRES <30 | LOW_TEMP_VSORRES> 35.5) %>%
+  filter(!LOW_TEMP_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,LOW_TEMP_VSORRES)
+
+HR<- mnh20.csv %>%
+  filter(HR_VSORRES < 60 | HR_VSORRES >190) %>%
+  filter(!HR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT, HR_VSORRES)
+
+MAX_HR<- mnh20.csv %>%
+  filter(MAX_HR_VSORRES < 60 | MAX_HR_VSORRES >190) %>%
+  filter(!MAX_HR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT, MAX_HR_VSORRES)
+
+RR <- mnh20.csv %>%
+  filter(RR_VSORRES < 20|RR_VSORRES >80) %>%
+  filter(!RR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,RR_VSORRES)
+
+MAX_RR <- mnh20.csv %>%
+  filter(MAX_RR_VSORRES < 20|MAX_RR_VSORRES >80) %>%
+  filter(!MAX_RR_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,MAX_RR_VSORRES)
+
+PULSEOX<- mnh20.csv %>%
+  filter(PULSEOX_VSORRES< 85 | PULSEOX_VSORRES >100) %>%
+  filter(!PULSEOX_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,PULSEOX_VSORRES)
+
+LOW_PULSEOX<- mnh20.csv %>%
+  filter(LOW_PULSEOX_VSORRES< 85 | LOW_PULSEOX_VSORRES >100) %>%
+  filter(!LOW_PULSEOX_VSORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,LOW_PULSEOX_VSORRES)
+
+TBILIRUBIN<- mnh20.csv %>%
+  filter(TBILIRUBIN_UMOLL_LBORRES< 0 |TBILIRUBIN_UMOLL_LBORRES> 510) %>%
+  filter(!TBILIRUBIN_UMOLL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,TBILIRUBIN_UMOLL_LBORRES)
+
+DBILIRUBIN<- mnh20.csv %>%
+  filter(DBILIRUBIN_UMOLL_LBORRES< 0 |DBILIRUBIN_UMOLL_LBORRES> 40) %>%
+  filter(!DBILIRUBIN_UMOLL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,DBILIRUBIN_UMOLL_LBORRES)
+
+IBILIRUBIN<- mnh20.csv %>%
+  filter(IBILIRUBIN_UMOLL_LBORRES< 0 |IBILIRUBIN_UMOLL_LBORRES> 40) %>%
+  filter(!IBILIRUBIN_UMOLL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,IBILIRUBIN_UMOLL_LBORRES)
+
+BGLUC_MMOLL<- mnh20.csv %>%
+  filter(BGLUC_MMOLL_LBORRES< 1 |BGLUC_MMOLL_LBORRES> 6.5) %>%
+  filter(!BGLUC_MMOLL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,BGLUC_MMOLL_LBORRES)
+BGLUC_MGDL<- mnh20.csv %>%
+  filter(BGLUC_MGDL_LBORRES< 25 |BGLUC_MGDL_LBORRES> 115) %>%
+  filter(!BGLUC_MGDL_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,BGLUC_MGDL_LBORRES)
+LACTATE<- mnh20.csv %>%
+  filter(LACTATE_LBORRES< 10.5 |LACTATE_LBORRES> 11) %>%
+  filter(!LACTATE_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,LACTATE_LBORRES)
+
+HIV<-mnh20.csv%>%
+  filter(HIV_VLOAD_LBORRES<0|HIV_VLOAD_LBORRES>1000000) %>%
+  filter(!HIV_VLOAD_LBORRES%in% c(-7, -5)) %>%
+  select(MOMID, PREGID,INFANTID, OBSSTDAT,UNPLANNED_VISDAT,ADMIT_OHOSTDAT,HIV_VLOAD_LBORRES)
+
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+if (nrow(TEMP) > 0) {
+  addWorksheet(wb, "TEMP")
+  writeData(wb, "TEMP", TEMP)
+}
+
+if (nrow(MAX_TEMP) > 0) {
+  addWorksheet(wb, "MAX_TEMP")
+  writeData(wb, "MAX_TEMP", MAX_TEMP)
+}
+
+if (nrow(LOW_TEMP) > 0) {
+  addWorksheet(wb, "LOW_TEMP")
+  writeData(wb, "LOW_TEMP", LOW_TEMP)
+}
+
+if (nrow(HR) > 0) {
+  addWorksheet(wb, "HR_VSORRES")
+  writeData(wb, "HR_VSORRES", HR)
+}
+if (nrow(MAX_HR) > 0) {
+  addWorksheet(wb, "MAX_HR_VSORRES")
+  writeData(wb, "MAX_HR_VSORRES", MAX_HR)
+}
+if (nrow(RR) > 0) {
+  addWorksheet(wb, "RR_VSORRES")
+  writeData(wb, "RR_VSORRES", RR)
+}
+if (nrow(MAX_RR) > 0) {
+  addWorksheet(wb, "MAX_RR_VSORRES")
+  writeData(wb, "MAX_RR_VSORRES", MAX_RR)
+}
+
+if (nrow(PULSEOX) > 0) {
+  addWorksheet(wb, "PULSEOX_VSORRES")
+  writeData(wb, "PULSEOX_VSORRES", PULSEOX)
+}
+
+if (nrow(LOW_PULSEOX) > 0) {
+  addWorksheet(wb, "LOW_PULSEOX_VSORRES")
+  writeData(wb, "LOW_PULSEOX_VSORRES",LOW_PULSEOX)
+}
+
+if (nrow(TBILIRUBIN) > 0) {
+  addWorksheet(wb, "TBILIRUBIN")
+  writeData(wb, "TBILIRUBIN", TBILIRUBIN)
+}
+if (nrow(DBILIRUBIN) > 0) {
+  addWorksheet(wb, "DBILIRUBIN")
+  writeData(wb, "DBILIRUBIN", DBILIRUBIN)
+}
+if (nrow(IBILIRUBIN) > 0) {
+  addWorksheet(wb, "IBILIRUBIN")
+  writeData(wb, "IBILIRUBIN", IBILIRUBIN)
+}
+if (nrow(BGLUC_MMOLL) > 0) {
+  addWorksheet(wb, "BGLUC_MMOLL")
+  writeData(wb, "BGLUC_MMOLL",BGLUC_MMOLL)
+}
+if (nrow(BGLUC_MGDL) > 0) {
+  addWorksheet(wb, "BGLUC_MGDL")
+  writeData(wb, "BGLUC_MGDL", BGLUC_MGDL)
+}
+if (nrow(LACTATE) > 0) {
+  addWorksheet(wb, "LACTATE")
+  writeData(wb, "LACTATE", LACTATE)
+}
+if (nrow(HIV) > 0) {
+  addWorksheet(wb, "HIV_VLOAD")
+  writeData(wb, "HIV_VLOAD", HIV)
+}
+# Save the workbook
+saveWorkbook(wb, "output_20.xlsx", overwrite = TRUE)
+message("Data exported to multiple sheets successfully.")
