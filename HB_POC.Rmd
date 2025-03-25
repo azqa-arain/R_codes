@@ -1,0 +1,172 @@
+---
+title: "HB_POC"
+author: "azqa"
+date: "2025-02-20"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(lubridate)
+library(knitr)
+
+
+output_path <- "~/DESCRIPTIVE_PRISMA/data/06-02-25/data/HB_POC.csv"
+mnh06 <- read_csv("~/DESCRIPTIVE_PRISMA/data/06-02-25/data/mnh06.csv")
+mnh08<- read_csv("~/DESCRIPTIVE_PRISMA/data/06-02-25/data/mnh08.csv")
+
+mnh06_visit02<-mnh06%>% filter(TYPE_VISIT==2)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,
+         MAT_VISIT_MNH06)%>%
+  filter(MAT_VISIT_MNH06!=4)
+
+mnh08_visit02<-mnh08 %>% filter(TYPE_VISIT==2)%>%
+ select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,MAT_VISIT_MNH08)%>%
+  filter(MAT_VISIT_MNH08!=4)
+
+combined_ANC20 <- mnh06_visit02 %>%
+  left_join(mnh08_visit02, by = c("MOMID", "PREGID","TYPE_VISIT"))%>%
+  rename(ANC20_HB_POC=HB_POC_LBPERF)
+    
+hb_poc_table <- as.data.frame(table(combined_ANC20$ANC20_HB_POC))
+colnames(hb_poc_table) <- c("ANC20_HB_POC", "Count")
+
+print(hb_poc_table)
+```
+```{r}
+
+mnh06_visit03<-mnh06%>% filter(TYPE_VISIT==3)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES, MAT_VISIT_MNH06)%>%
+  filter(MAT_VISIT_MNH06!=4)
+mnh08_visit03<-mnh08 %>% filter(TYPE_VISIT==3)%>%
+ select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,MAT_VISIT_MNH08)%>%
+  filter(MAT_VISIT_MNH08!=4)
+
+combined_ANC28 <- mnh06_visit03 %>%
+  left_join(mnh08_visit03, by = c("MOMID", "PREGID","TYPE_VISIT"))%>%
+  rename(ANC28_HB_POC=HB_POC_LBPERF)
+    
+hb_poc_table <- as.data.frame(table(combined_ANC28$ANC28_HB_POC))
+colnames(hb_poc_table) <- c("ANC28_HB_POC", "Count")
+
+print(hb_poc_table)
+```
+
+```{r}
+mnh06_visit04<-mnh06%>% filter(TYPE_VISIT==4)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,MAT_VISIT_MNH06)%>%
+  filter(MAT_VISIT_MNH06!=4)
+mnh08_visit04<-mnh08 %>% filter(TYPE_VISIT==4)%>%
+ select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,MAT_VISIT_MNH08)%>%
+  filter(MAT_VISIT_MNH08!=4)
+
+combined_ANC32 <- mnh06_visit04 %>%
+  left_join(mnh08_visit04, by = c("MOMID", "PREGID","TYPE_VISIT"))%>%
+  rename(ANC32_HB_POC=HB_POC_LBPERF)
+    
+hb_poc_table <- as.data.frame(table(combined_ANC32$ANC32_HB_POC))
+colnames(hb_poc_table) <- c("ANC32_HB_POC", "Count")
+
+print(hb_poc_table)
+```
+
+
+```{r}
+mnh06_visit05<-mnh06%>% filter(TYPE_VISIT==5)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)
+mnh08_visit05<-mnh08 %>% filter(TYPE_VISIT==5)%>%
+ select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,MAT_VISIT_MNH08)%>%
+  filter(MAT_VISIT_MNH08!=4)
+
+combined_ANC36 <- mnh06_visit05 %>%
+  left_join(mnh08_visit05, by = c("MOMID", "PREGID","TYPE_VISIT"))%>%
+  rename(ANC36_HB_POC=HB_POC_LBPERF)
+    
+hb_poc_table <- as.data.frame(table(combined_ANC36$ANC36_HB_POC))
+colnames(hb_poc_table) <- c("ANC36_HB_POC", "Count")
+
+print(hb_poc_table)
+
+```
+
+
+```{r}
+mnh06_visit10<-mnh06%>% filter(TYPE_VISIT==10)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)
+mnh08_visit10<-mnh08 %>% filter(TYPE_VISIT==10)%>%
+ select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,MAT_VISIT_MNH08)%>%
+  filter(MAT_VISIT_MNH08!=4)
+
+combined_PNC6 <- mnh06_visit10 %>%
+  left_join(mnh08_visit10, by = c("MOMID", "PREGID","TYPE_VISIT"))%>%
+  rename(PNC6_HB_POC=HB_POC_LBPERF)
+    
+hb_poc_table <- as.data.frame(table(combined_PNC6$PNC6_HB_POC))
+colnames(hb_poc_table) <- c("PNC6_HB_POC", "Count")
+
+print(hb_poc_table)
+```
+
+
+
+```{r}
+mnh06_visit10<-mnh06%>% filter(TYPE_VISIT==8)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,
+         MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)%>%
+rename(PNC1_HB_POC=HB_POC_LBPERF)
+hb_poc_table <- as.data.frame(table(mnh06_visit10$PNC1_HB_POC))
+colnames(hb_poc_table) <- c("PNC1_HB_POC", "Count")
+print(hb_poc_table)
+
+```
+```{r}
+mnh06_visit7<-mnh06%>% filter(TYPE_VISIT==7)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,
+         MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)%>%
+rename(PNC0_HB_POC=HB_POC_LBPERF)
+hb_poc_table <- as.data.frame(table(mnh06_visit7$PNC0_HB_POC))
+colnames(hb_poc_table) <- c("PNC0_HB_POC", "Count")
+print(hb_poc_table)
+
+```
+
+
+
+
+```{r}
+mnh06_visit9<-mnh06%>% filter(TYPE_VISIT==9)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,
+          MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)%>%
+rename(PNC4_HB_POC=HB_POC_LBPERF)
+hb_poc_table <- as.data.frame(table(mnh06_visit9$PNC4_HB_POC))
+colnames(hb_poc_table) <- c("PNC4_HB_POC", "Count")
+print(hb_poc_table)
+```
+```{r}
+mnh06_visit12<-mnh06%>% filter(TYPE_VISIT==12)%>%
+  select(MOMID,PREGID,DIAG_VSDAT,TYPE_VISIT,MAT_VISIT_MNH06,HB_POC_LBPERF,HB_POC_LBORRES,  MAT_VISIT_MNH06)%>%
+   filter(MAT_VISIT_MNH06!=4)%>%
+rename(PNC52_HB_POC=HB_POC_LBPERF)
+hb_poc_table <- as.data.frame(table(mnh06_visit12$PNC52_HB_POC))
+colnames(hb_poc_table) <- c("PNC52_HB_POC", "Count")
+print(hb_poc_table)
+```
+
+
+```{r}
+HEV_32<- mnh08 %>%
+  filter(LBSTDAT > as.Date("19-07-2024", format = "%d-%m-%Y"))%>%
+  filter(TYPE_VISIT==4)%>%
+  select(MOMID,PREGID,HEV_LBPERF_1)
+HEV_ANC32 <- as.data.frame(table(HEV_32$HEV_LBPERF_1))
+colnames(hb_poc_table) <- c("HEV_LBPERF_1", "Count")
+print(HEV_ANC32)
+
+```
+
