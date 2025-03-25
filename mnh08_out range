@@ -1,0 +1,525 @@
+#Azqa Mazhar
+#___________#
+#MNH08 RANGES
+
+
+# set the Path to export the Data 
+getwd()
+setwd("~/DESCRIPTIVE_PRISMA/data/21-01-25/output")
+
+library(readr)
+mnh08 <- read_csv("~/DESCRIPTIVE_PRISMA/data/21-01-25/data/mnh08.csv")
+attach(mnh08)
+
+# Load necessary libraries
+library(dplyr)
+library(openxlsx)# For exporting to Excel
+library(lubridate)
+
+
+##Filter the Date (cut of date to filter the new data)
+mnh08 <- mnh08 %>%
+  filter(LBSTDAT > as.Date("03-01-2025", format = "%d-%m-%Y"))
+
+# CBC  with excluding  -7 and -5
+HB <- mnh08 %>%
+  filter(CBC_HB_LBORRES < 1 | CBC_HB_LBORRES > 20) %>%
+  filter(!CBC_HB_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_HB_LBORRES)
+# HCT RAnge  excluding  -7 and -5
+HCT <- mnh08 %>%
+  filter(CBC_HCT_LBORRES< 10 | CBC_HCT_LBORRES > 50) %>%
+  filter(!CBC_HCT_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_HCT_LBORRES)
+
+# WBC
+WBC <- mnh08 %>%
+  filter(CBC_WBC_LBORRES < 1 | CBC_WBC_LBORRES > 12) %>%
+  filter(!CBC_WBC_LBORRES  %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_WBC_LBORRES)
+
+Neutrophils <- mnh08 %>%
+  filter(CBC_NEU_PCT_LBORRES < 15 | CBC_NEU_PCT_LBORRES > 85) %>%
+  filter(!CBC_NEU_PCT_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_NEU_PCT_LBORRES)
+
+Lymphocyte <- mnh08 %>%
+  filter(CBC_LYMPH_PCT_LBORRES < 8 | CBC_LYMPH_PCT_LBORRES > 70) %>%
+  filter(!CBC_LYMPH_PCT_LBORRES %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_LYMPH_PCT_LBORRES)
+
+Erythrocyte<- mnh08 %>%
+  filter(CBC_ERYTH_MM_LBORRES < 2.7 | CBC_ERYTH_MM_LBORRES > 6.5) %>%
+  filter(!CBC_ERYTH_MM_LBORRES  %in% c(-7, -5)) %>%
+  select(MOMID, PREGID, LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_ERYTH_MM_LBORRES)
+
+MCV<-mnh08%>%
+  filter((CBC_MCV_LBORRES<50 | CBC_MCV_LBORRES>110))%>%
+  filter(!CBC_MCV_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_MCV_LBORRES)
+
+MCH<-mnh08%>%
+  filter((CBC_MCH_LBORRES < 15 | CBC_MCH_LBORRES >37))%>%
+  filter(!CBC_MCH_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_MCH_LBORRES)
+
+MCH_GDL<-mnh08%>%
+  filter((CBC_MCHC_GDL_LBORRES < 26 | CBC_MCHC_GDL_LBORRES > 38))%>%
+  filter(!CBC_MCHC_GDL_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT,CBC_MCHC_GDL_LBORRES)
+
+platelets<-mnh08%>%
+  filter((CBC_PLATE_LBORRES<80|CBC_PLATE_LBORRES>500))%>%
+  filter(!CBC_PLATE_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_PLATE_LBORRES)
+
+monocyte<-mnh08%>%
+  filter((CBC_MONO_PCT_LBORRES<0|CBC_MONO_PCT_LBORRES>20))%>% 
+  filter(!CBC_MONO_PCT_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_MONO_PCT_LBORRES)
+
+Eosinophils<-mnh08%>%
+  filter((CBC_EOS_PCT_LBORRES<0|CBC_EOS_PCT_LBORRES>15))%>%
+  filter(!CBC_EOS_PCT_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_EOS_PCT_LBORRES)
+
+RDW<-mnh08%>%
+  filter((CBC_RDW_PCT_LBORRES <10 | CBC_RDW_PCT_LBORRES> 25))%>%
+  filter(!CBC_RDW_PCT_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,CBC_LBTSTDAT, CBC_RDW_PCT_LBORRES)
+
+#LFT
+AST<-mnh08%>%
+  filter((AST_ul_LBORRES<3 | AST_ul_LBORRES>45))%>%
+  filter(!AST_ul_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,AST_ul_LBORRES)
+
+ALT<-mnh08%>%
+  filter((ALT_ul_LBORRES<2 | ALT_ul_LBORRES>60))%>%
+  filter(!ALT_ul_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT, ALT_ul_LBORRES)
+
+ALP<-mnh08%>%
+  filter((ALP_LBORRES<25 | ALP_LBORRES>250))%>%
+  filter(!ALP_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT, ALP_LBORRES)
+
+TBILIRUBIN<-mnh08%>%
+  filter((TBILIRUBIN_LBORRES<0|TBILIRUBIN_LBORRES>21))%>%
+  filter(!TBILIRUBIN_LBORRES %in% c(-7,-5))%>%
+  mutate(TBILIRUBIN_LBORRES = TBILIRUBIN_LBORRES / 17.1) %>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,TBILIRUBIN_LBORRES)
+
+DBILIRUBIN<-mnh08%>%
+  filter((DBILIRUBIN_LBORRES<0|DBILIRUBIN_LBORRES>8))%>%
+  filter(!DBILIRUBIN_LBORRES %in% c(-7,-5))%>%
+  mutate(DBILIRUBIN_LBORRES = DBILIRUBIN_LBORRES / 17.1) %>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,DBILIRUBIN_LBORRES)
+
+TPROTEIN<-mnh08%>%
+  filter((TPROTEIN_LBORRES<40 | TPROTEIN_LBORRES>100))%>%
+  filter(!TPROTEIN_LBORRES %in% c(-7,-5))%>%
+  mutate(TPROTEIN_LBORRES = TPROTEIN_LBORRES/10) %>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,TPROTEIN_LBORRES)
+
+ALBUMIN<-mnh08%>%
+  filter((ALBUMIN_LBORRES<2.5 | ALBUMIN_LBORRES>6))%>%
+  filter(!ALBUMIN_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,ALBUMIN_LBORRES)
+
+GAMMAGT<-mnh08%>%
+  filter((GAMMAGT_LBORRES<0 | GAMMAGT_LBORRES>55))%>%
+  filter(!GAMMAGT_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,GAMMAGT_LBORRES)
+
+IBILIRUBIN<-mnh08%>%
+  filter((IBILIRUBIN_LBORRES<0 | IBILIRUBIN_LBORRES>14))%>%
+  filter(!IBILIRUBIN_LBORRES %in% c(-7,-5))%>%
+  mutate(IBILIRUBIN_LBORRES = IBILIRUBIN_LBORRES / 17.1) %>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,LFT_LBTSTDAT,IBILIRUBIN_LBORRES)
+
+#RENAL FUNCTION TEST
+BUN_TEST <- mnh08 %>%
+  filter(BUN_mmoll_LBORRES < 0.9 | BUN_mmoll_LBORRES > 5) %>%
+  filter(!BUN_mmoll_LBORRES %in% c(-7, -5)) %>%
+  mutate(BUN_mmoll_LBORRES = BUN_mmoll_LBORRES /0.357 ) %>%
+  select(MOMID, PREGID, LBSTDAT, TYPE_VISIT, RENAL_LBTSTDAT, BUN_mmoll_LBORRES)
+
+CREATININE<-mnh08%>%
+  filter((CREAT_umoll_LBORRES<25 | CREAT_umoll_LBORRES>119))%>%
+  filter(!CREAT_umoll_LBORRES%in% c(-7,-5))%>%
+  mutate(CREAT_umoll_LBORRES= CREAT_umoll_LBORRES/88.4) %>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,CREAT_umoll_LBORRES)
+
+SODIUM<-mnh08%>%
+  filter((SODIUM_LBORRES<120 | SODIUM_LBORRES>165))%>%
+  filter(!SODIUM_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,SODIUM_LBORRES)
+
+POTASSIUM<-mnh08%>%
+  filter((POTASSIUM_LBORRES<2 | POTASSIUM_LBORRES>6.5))%>%
+  filter(!POTASSIUM_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,POTASSIUM_LBORRES)
+
+CHLORIDE<-mnh08%>%
+  filter((CHLORIDE_LBORRES<85 | CHLORIDE_LBORRES>115))%>%
+  filter(!CHLORIDE_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,CHLORIDE_LBORRES)
+
+PHOSPHORUS<-mnh08%>%
+  filter((PHOSPHORUS_LBORRES<0.75|PHOSPHORUS_LBORRES>2))%>%
+  filter(!PHOSPHORUS_LBORRES%in% c(-7,-5))%>%
+  mutate(PHOSPHORUS_LBORRES=PHOSPHORUS_LBORRES/0.323)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,PHOSPHORUS_LBORRES)
+
+CALCIUM<-mnh08%>%
+  filter((CALCIUM_LBORRES<1.75 | CALCIUM_LBORRES>2.75))%>%
+  filter(!CALCIUM_LBORRES %in% c(-7,-5))%>%
+  mutate(CALCIUM_LBORRES=CALCIUM_LBORRES/0.25)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,CALCIUM_LBORRES)
+
+CARB_DIOX<-mnh08%>%
+  filter((CARB_DIOX_LBORRES<10 | CARB_DIOX_LBORRES>35))%>%
+  filter(!CARB_DIOX_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,CARB_DIOX_LBORRES)
+
+MAGNESIUM<-mnh08%>%
+  filter((MAGNESIUM_LBORRES<0.4 |MAGNESIUM_LBORRES>1.1))%>%
+  filter(!MAGNESIUM_LBORRES %in% c(-7,-5))%>%
+  mutate(MAGNESIUM_LBORRES=MAGNESIUM_LBORRES/0.4114)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,RENAL_LBTSTDAT,MAGNESIUM_LBORRES)
+
+VITB12_COB<-mnh08%>%
+  filter((VITB12_COB_LBORRES<25|VITB12_COB_LBORRES>1000))%>%
+  filter(!VITB12_COB_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,VITB12_COB_LBTSTDAT,VITB12_COB_LBORRES)
+
+VITB12_HOL<-mnh08%>%
+  filter((VITB12_HOL_LBORRES<160|VITB12_HOL_LBORRES>950))%>%
+  filter(!VITB12_HOL_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,VITB12_HOL_LBTSTDAT,VITB12_HOL_LBORRES)
+
+#QUANSYS
+FOLATE_PLASMA<-mnh08%>%
+  filter((FOLATE_PLASMA_NMOLL_LBORRES<1.8 | FOLATE_PLASMA_NMOLL_LBORRES>54))%>%
+  filter(!FOLATE_PLASMA_NMOLL_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,FOLATE_PLASMA_LBTSTDAT,FOLATE_PLASMA_NMOLL_LBORRES)
+
+ZINC<-mnh08%>%
+  filter((ZINC_LBORRES<25 | ZINC_LBORRES>130))%>%
+  filter(!ZINC_LBORRES %in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,ZINC_LBTSTDAT,ZINC_LBORRES)
+
+##HEPCIDINE<-mnh08%>%
+  ##filter((IRON_HEP_LBORRES< --| IRON_HEP_LBORRES>--))%>%
+  ##filter(!IRON_HEP_LBORRES %in% c(-7,-5))%>%
+  ##select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,IRON_HEP_ LBTSTDAT,IRON_HEP_LBORRES)
+
+FERRITIN<-mnh08%>%
+  filter((FERRITIN_LBORRES<0.6|FERRITIN_LBORRES>857.2))%>%
+  filter(!FERRITIN_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,FERRITIN_LBORRES)
+
+IODINE<-mnh08%>%
+  filter((IODINE_LBORRES<1.52 | IODINE_LBORRES>732.4))%>%
+  filter(!IODINE_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,IODINE_LBORRES)
+
+TRANSFERRIN<-mnh08%>%
+  filter((TRANSFERRIN_LBORRES<0.088|TRANSFERRIN_LBORRES>127.2))%>%
+  filter(!TRANSFERRIN_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,TRANSFERRIN_LBORRES)
+
+RBP4<-mnh08%>%
+  filter((RBP4_LBORRES<0.0376 | RBP4_LBORRES>54.8))%>%
+  filter(!RBP4_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,RBP4_LBORRES)
+
+CRP<-mnh08%>%
+  filter((CRP_LBORRES<0.024| CRP_LBORRES>7))%>%
+  filter(!CRP_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,CRP_LBORRES)
+
+AGP<-mnh08%>%
+  filter((AGP_LBORRES<0.0304| AGP_LBORRES>14.8))%>%
+  filter(!AGP_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,AGP_LBORRES)
+
+HRP<-mnh08%>%
+  filter((HRP_LBORRES<0.0017| HRP_LBORRES>1))%>%
+  filter(!HRP_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,QUANSYS_LBTSTDAT ,HRP_LBORRES)
+
+FOLATE_RBC<-mnh08%>%
+  filter((FOLATE_RBC_NMOLL_LBORRES<1.8|FOLATE_RBC_NMOLL_LBORRES>54))%>%
+  filter(!FOLATE_RBC_NMOLL_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,FOLATE_RBC_LBTSTDAT,FOLATE_RBC_NMOLL_LBORRES)
+
+THYROID_TSH<-mnh08%>%
+  filter((THYROID_TSH_LBORRES<0.1|THYROID_TSH_LBORRES>5))%>%
+  filter(!THYROID_TSH_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,THYROID_LBTSTDAT,THYROID_TSH_LBORRES)
+
+THYROID_FREET4<-mnh08%>%
+  filter((THYROID_FREET4_LBORRES<0.5|THYROID_FREET4_LBORRES>2.25))%>%
+  filter(!THYROID_FREET4_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,THYROID_LBTSTDAT,THYROID_FREET4_LBORRES)
+
+THYROID_FREET3<-mnh08%>%
+  filter((THYROID_FREET3_LBORRES<1.5|THYROID_FREET3_LBORRES>5))%>%
+  filter(!THYROID_FREET3_LBORRES%in% c(-7,-5))%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,THYROID_LBTSTDAT,THYROID_FREET3_LBORRES)
+
+BGLUC_PRETEST<-mnh08%>%
+  filter((BGLUC_PRETEST_MMOLL_LBORRES<2|BGLUC_PRETEST_MMOLL_LBORRES>6))%>%
+  filter(!BGLUC_PRETEST_MMOLL_LBORRES%in% c(-7,-5))%>%
+  mutate(BGLUC_PRETEST_MMOLL_LBORRES=BGLUC_PRETEST_MMOLL_LBORRES/0.0555)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,BGLUC_LBTSTDAT,BGLUC_PRETEST_MMOLL_LBORRES)
+
+BGLUC_ORAL_1HR<-mnh08%>%
+  filter((BGLUC_ORAL_1HR_MMOLL_LBORRES<0|BGLUC_ORAL_1HR_MMOLL_LBORRES>11.1))%>%
+  filter(!BGLUC_ORAL_1HR_MMOLL_LBORRES%in% c(-7,-5))%>%
+  mutate(BGLUC_ORAL_1HR_MMOLL_LBORRES=BGLUC_ORAL_1HR_MMOLL_LBORRES/0.0555)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,BGLUC_LBTSTDAT,BGLUC_ORAL_1HR_MMOLL_LBORRES)
+
+BGLUC_ORAL_2HR<-mnh08%>%
+  filter((BGLUC_ORAL_2HR_MMOLL_LBORRES<0|BGLUC_ORAL_2HR_MMOLL_LBORRES>8.5))%>%
+  filter(!BGLUC_ORAL_2HR_MMOLL_LBORRES%in% c(-7,-5))%>%
+  mutate(BGLUC_ORAL_2HR_MMOLL_LBORRES=BGLUC_ORAL_2HR_MMOLL_LBORRES/0.0555)%>%
+  select(MOMID,PREGID,LBSTDAT,TYPE_VISIT,BGLUC_LBTSTDAT,BGLUC_ORAL_2HR_MMOLL_LBORRES)
+
+# Remove the old workbook object
+rm(wb) 
+#create workbook again
+wb <- createWorkbook()
+
+# Add data frames to the workbook as sheets (if not empty)
+if (nrow(HCT) > 0) {
+  addWorksheet(wb, "HCT")
+  writeData(wb, "HCT", HCT)
+}
+
+if (nrow(HB) > 0) {
+  addWorksheet(wb, "HB")
+  writeData(wb, "HB", HB)
+}
+
+if (nrow(WBC) > 0) {
+  addWorksheet(wb, "WBC")
+  writeData(wb, "WBC", WBC)
+}
+
+if (nrow(Neutrophils)>0) {
+  addWorksheet(wb,"Neutrophils")
+  writeData(wb,"Neutrophils",Neutrophils)
+}
+
+if (nrow(Lymphocyte)>0) {
+  addWorksheet(wb,"Lymphocyte")
+  writeData(wb,"Lymphocyte",Lymphocyte)
+}
+
+if (nrow(MCH)>0) {
+  addWorksheet(wb,"MCH")
+  writeData(wb,"MCH",MCH)
+}
+
+if (nrow(MCH_GDL)>0) {
+  addWorksheet(wb,"MCH_GDL")
+  writeData(wb,"MCH_GDL",MCH_GDL)
+}
+
+if (nrow(MCV)>0) {
+  addWorksheet(wb,"MCV")
+  writeData(wb,"MCV",MCV)
+}
+
+if (nrow(platelets)>0) {
+  addWorksheet(wb,"platelets")
+  writeData(wb,"platelets",platelets)
+}
+
+if (nrow(monocyte)>0) {
+  addWorksheet(wb,"monocyte")
+  writeData(wb,"monocyte",monocyte)
+}
+
+
+if (nrow(Eosinophils)>0) {
+  addWorksheet(wb,"Eosinophils")
+  writeData(wb,"Eosinophils",Eosinophils)
+}
+
+if (nrow(RDW)>0) {
+  addWorksheet(wb,"RDW")
+  writeData(wb,"RDW",RDW)
+}
+
+if (nrow(AST) > 0) {
+  addWorksheet(wb, "AST")
+  writeData(wb, "AST", AST)
+}
+if (nrow(ALT) > 0) {
+  addWorksheet(wb, "ALT")
+  writeData(wb, "ALT", ALT)
+}
+if (nrow(ALP) > 0) {
+  addWorksheet(wb, "ALP")
+  writeData(wb, "ALP", ALP)
+}
+
+if (nrow(TBILIRUBIN) > 0) {
+  addWorksheet(wb, "TBILIRUBIN")
+  writeData(wb, "TBILIRUBIN", TBILIRUBIN)
+}
+
+if (nrow(DBILIRUBIN) > 0) {
+  addWorksheet(wb, "DBILIRUBIN")
+  writeData(wb, "DBILIRUBIN", DBILIRUBIN)
+}
+if (nrow(TPROTEIN) > 0) {
+  addWorksheet(wb, "TPROTEIN")
+  writeData(wb, "TPROTEIN", TPROTEIN)
+}
+
+if (nrow(ALBUMIN) > 0) {
+  addWorksheet(wb, "ALBUMIN")
+  writeData(wb, "ALBUMIN", ALBUMIN)
+}
+
+if (nrow(GAMMAGT) > 0) {
+  addWorksheet(wb, "GAMMAGT")
+  writeData(wb, "GAMMAGT", GAMMAGT)
+}
+
+if (nrow(IBILIRUBIN) > 0) {
+  addWorksheet(wb, "IBILIRUBIN")
+  writeData(wb, "IBILIRUBIN",IBILIRUBIN)
+}
+if (nrow(BUN_TEST) > 0) {
+  addWorksheet(wb, "BUN_TEST")
+  writeData(wb, "BUN_TEST",BUN_TEST)
+}
+if (nrow(CREATININE) > 0) {
+  addWorksheet(wb, "CREATININE")
+  writeData(wb, "CREATININE",CREATININE)
+}
+
+if (nrow(SODIUM) > 0) {
+  addWorksheet(wb, "SODIUM")
+  writeData(wb, "SODIUM",SODIUM)
+}
+if (nrow(POTASSIUM) > 0) {
+  addWorksheet(wb, "POTASSIUM")
+  writeData(wb, "POTASSIUM",POTASSIUM)
+}
+
+if (nrow(PHOSPHORUS) > 0) {
+  addWorksheet(wb, "PHOSPHORUS")
+  writeData(wb, "PHOSPHORUS",PHOSPHORUS)
+}
+if (nrow(CHLORIDE) > 0) {
+  addWorksheet(wb, "CHLORIDE")
+  writeData(wb, "CHLORIDE",CHLORIDE)
+}
+
+if (nrow(CALCIUM) > 0) {
+  addWorksheet(wb, "CALCIUM")
+  writeData(wb, "CALCIUM",CALCIUM)
+}
+if (nrow(CARB_DIOX) > 0) {
+  addWorksheet(wb, "CARB_DIOX")
+  writeData(wb, "CARB_DIOX",CARB_DIOX)
+}
+if (nrow(MAGNESIUM) > 0) {
+  addWorksheet(wb, "MAGNESIUM")
+  writeData(wb, "MAGNESIUM",MAGNESIUM)
+}
+if (nrow(VITB12_COB) > 0) {
+  addWorksheet(wb, "VITB12_COB")
+  writeData(wb, "VITB12_COB",VITB12_COB)
+}
+if (nrow(VITB12_HOL) > 0) {
+  addWorksheet(wb, "VITB12_HOL")
+  writeData(wb, "VITB12_HOL",VITB12_HOL)
+}
+
+if (nrow(FOLATE_PLASMA) > 0) {
+  addWorksheet(wb, "FOLATE_PLASMA")
+  writeData(wb, "FOLATE_PLASMA",FOLATE_PLASMA)
+}
+if (nrow(ZINC) > 0) {
+  addWorksheet(wb, "ZINC")
+  writeData(wb, "ZINC",ZINC)
+}
+if (nrow(FERRITIN) > 0) {
+  addWorksheet(wb, "FERRITIN")
+  writeData(wb, "FERRITIN",FERRITIN)
+}
+if (nrow(IODINE) > 0) {
+  addWorksheet(wb, "IODINE")
+  writeData(wb, "IODINE",IODINE)
+}
+
+if (nrow(TRANSFERRIN) > 0) {
+  addWorksheet(wb, "TRANSFERRIN")
+  writeData(wb, "TRANSFERRIN",TRANSFERRIN)
+}
+
+
+if (nrow(RBP4) > 0) {
+  addWorksheet(wb, "RBP4")
+  writeData(wb, "RBP4",RBP4)
+}
+if (nrow(CRP) > 0) {
+  addWorksheet(wb, "CRP")
+  writeData(wb, "CRP",CRP)
+}
+
+if (nrow(AGP) > 0) {
+  addWorksheet(wb, "AGP")
+  writeData(wb, "AGP",AGP)
+}
+
+if (nrow(HRP) > 0) {
+  addWorksheet(wb, "HRP")
+  writeData(wb, "HRP",HRP)
+}
+
+if (nrow(FOLATE_RBC) > 0) {
+  addWorksheet(wb, "FOLATE_RBC")
+  writeData(wb, "FOLATE_RBC",FOLATE_RBC)
+}
+if (nrow(THYROID_TSH) > 0) {
+  addWorksheet(wb, "THYROID_TSH")
+  writeData(wb, "THYROID_TSH",THYROID_TSH)
+}
+if (nrow(THYROID_FREET4) > 0) {
+  addWorksheet(wb, "THYROID_FREET4")
+  writeData(wb, "THYROID_FREET4",THYROID_FREET4)
+}
+
+if (nrow(THYROID_FREET3) > 0) {
+  addWorksheet(wb, "THYROID_FREET3")
+  writeData(wb, "THYROID_FREET3",THYROID_FREET3)
+}
+
+
+if (nrow(BGLUC_PRETEST) > 0) {
+  addWorksheet(wb, "BGLUC_PRETEST")
+  writeData(wb, "BGLUC_PRETEST",BGLUC_PRETEST)
+}
+
+if (nrow(BGLUC_ORAL_1HR) > 0) {
+  addWorksheet(wb, "BGLUC_ORAL_1HR")
+  writeData(wb, "BGLUC_ORAL_1HR",BGLUC_ORAL_1HR)
+}
+
+if (nrow(BGLUC_ORAL_2HR) > 0) {
+  addWorksheet(wb, "BGLUC_ORAL_2HR")
+  writeData(wb, "BGLUC_ORAL_2HR",BGLUC_ORAL_2HR)
+}
+# Save the workbook
+saveWorkbook(wb, "output_08.xlsx", overwrite = TRUE)
+
+message("Data exported to multiple sheets successfully.")
